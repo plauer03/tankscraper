@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>Fuel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div id="view-search" class="view active">
+        <header>
+            <div class="header-top">
+                <h1>Tankstellen</h1>
+                <div class="car-badge" onclick="switchTab('settings')">
+                   <i class="ph-fill ph-car-profile"></i>
+                   <span id="header-car-name">Mein Auto</span>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <i class="ph-bold ph-magnifying-glass search-icon" onclick="triggerSearch()"></i>
+                    <input type="text" id="address-input" placeholder="Stadt oder PLZ..." onkeydown="handleEnter(event)">
+                </div>
+                <button class="geo-btn" onclick="locateMe()">
+                    <i class="ph-fill ph-navigation-arrow"></i>
+                </button>
+            </div>
+
+            <div class="filter-row">
+                <div class="select-wrapper">
+                    <select id="fuel-type" onchange="triggerSearch()">
+                        <option value="e5">Super E5</option>
+                        <option value="e10" selected>Super E10</option>
+                        <option value="diesel">Diesel</option>
+                    </select>
+                    <i class="ph-bold ph-caret-down select-arrow"></i>
+                </div>
+            </div>
+        </header>
+
+        <div id="results-list" class="content-scroll">
+            <div class="empty-state">
+                <i class="ph-duotone ph-map-pin"></i>
+                <p>Gib einen Ort ein oder nutze den Pfeil.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-settings" class="view">
+        <header><h1>Einstellungen</h1></header>
+        <div class="content-scroll settings-content">
+            <div class="settings-group">
+                <h2>Fahrzeugdaten</h2>
+                <div class="input-row">
+                    <label>Bezeichnung</label>
+                    <input type="text" id="car-name" placeholder="z.B. Golf 7" value="Mein Auto">
+                </div>
+                <div class="input-row">
+                    <label>Verbrauch (L/100km)</label>
+                    <input type="number" id="car-cons" placeholder="7.5" value="7.5" step="0.1">
+                </div>
+                <div class="input-row">
+                    <label>Tankvolumen (L)</label>
+                    <input type="number" id="car-tank" placeholder="50" value="50">
+                </div>
+                <button class="btn-save" onclick="saveSettings()">Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-route" class="view">
+        <header><h1>Route</h1></header>
+        <div class="content-scroll empty-state">
+            <i class="ph-duotone ph-path"></i>
+            <p>Routenplanung kommt bald.</p>
+        </div>
+    </div>
+
+    <div id="detail-overlay" class="overlay">
+        <div class="overlay-backdrop" onclick="closeDetail()"></div>
+        <div class="overlay-card">
+            <div class="drag-handle"></div>
+            <div class="overlay-header">
+                <div class="brand-pill" id="det-brand-pill">A</div>
+                <button class="close-btn" onclick="closeDetail()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            
+            <div class="price-hero">
+                <span id="det-price">1.68<small>9</small></span>
+                <span class="currency">€</span>
+            </div>
+            
+            <div class="meta-info">
+                <h2 id="det-name">Tankstelle</h2>
+                <p id="det-address">Musterstraße 1</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="label">Gesamt</span>
+                    <strong id="det-total">-</strong>
+                </div>
+                 <div class="stat-item">
+                    <span class="label">Effektiv / L</span>
+                    <strong id="det-real" style="color:var(--accent)">-</strong>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Fahrtweg</span>
+                    <strong id="det-dist">-</strong>
+                </div>
+            </div>
+
+            <button class="btn-nav" onclick="navigateExternal()">
+                <i class="ph-bold ph-navigation-arrow"></i> Navigation starten
+            </button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchTab('search', this)">
+            <i class="ph-fill ph-magnifying-glass"></i>
+            <span>Suchen</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('route', this)">
+            <i class="ph-fill ph-map-trifold"></i>
+            <span>Route</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('settings', this)">
+            <i class="ph-fill ph-gear"></i>
+            <span>Profil</span>
+        </a>
+    </nav>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
