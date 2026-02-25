@@ -1,7 +1,7 @@
 # 🛢️ TankScraper
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/8255363e-28af-46ad-ae9c-e77ea1781594" alt="TankScraper Preview" width="768" />
+  <img width="313" height="682" alt="image" src="https://github.com/user-attachments/assets/e46cdc48-0d88-4b0c-85b4-2a8166d361f3" />
 </p>
 
 **TankScraper** ist eine schlanke Web-App zum schnellen und übersichtlichen Abrufen von Tankstellen-Daten.
