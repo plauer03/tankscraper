@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
 </head>
 <body>
 
@@ -55,23 +56,49 @@
 
     <div id="view-settings" class="view">
         <header><h1>Einstellungen</h1></header>
-        <div class="content-scroll settings-content">
-            <div class="settings-group">
-                <h2>Fahrzeugdaten</h2>
-                <div class="input-row">
-                    <label>Bezeichnung</label>
-                    <input type="text" id="car-name" placeholder="z.B. Golf 7" value="Mein Auto">
+        <div class="content-scroll">
+            
+            <div class="settings-title">MEIN FAHRZEUG</div>
+            <div class="settings-card">
+                <div class="settings-row">
+                    <div class="row-label">
+                        <div class="icon-box" style="background: #007AFF"><i class="ph-fill ph-car"></i></div>
+                        <span>Name</span>
+                    </div>
+                    <input type="text" id="car-name" placeholder="Name" value="Mein Auto">
                 </div>
-                <div class="input-row">
-                    <label>Verbrauch (L/100km)</label>
-                    <input type="number" id="car-cons" placeholder="7.5" value="7.5" step="0.1">
+
+                <div class="settings-row">
+                    <div class="row-label">
+                        <div class="icon-box" style="background: #FF9500"><i class="ph-fill ph-drop"></i></div>
+                        <span>Verbrauch</span>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="number" id="car-cons" placeholder="7.5" step="0.1">
+                        <span class="unit">L/100km</span>
+                    </div>
                 </div>
-                <div class="input-row">
-                    <label>Tankvolumen (L)</label>
-                    <input type="number" id="car-tank" placeholder="50" value="50">
+
+                <div class="settings-row last">
+                    <div class="row-label">
+                        <div class="icon-box" style="background: #34C759"><i class="ph-fill ph-gas-can"></i></div>
+                        <span>Tankgröße</span>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="number" id="car-tank" placeholder="50">
+                        <span class="unit">Liter</span>
+                    </div>
                 </div>
-                <button class="btn-save" onclick="saveSettings()">Speichern</button>
             </div>
+
+            <div class="settings-info">
+                Diese Daten werden lokal auf deinem Gerät gespeichert und für die Kostenberechnung genutzt.
+            </div>
+
+            <button class="btn-primary-action" onclick="saveSettings()">
+                Einstellungen speichern
+            </button>
+
         </div>
     </div>
 
