@@ -1,11 +1,11 @@
-# 🛢️ TankScraper
+# 🛢️ refuel
 
-<p align="center">
-  <img width="313" height="682" alt="image" src="https://github.com/user-attachments/assets/e46cdc48-0d88-4b0c-85b4-2a8166d361f3" />
-</p>
+**TankScraper** – Schnell & übersichtlich Tankstellenpreise abrufen.
 
-**TankScraper** ist eine schlanke Web-App zum schnellen und übersichtlichen Abrufen von Tankstellen-Daten.
+## PWA auf iOS
+1. Safari öffnen → [https://tankscraper.vercel.app](https://tankscraper.vercel.app)  
+2. Teilen-Symbol → *Zum Home-Bildschirm*  
+3. Fertig – läuft wie eine native App
 
-## Live Demo
-
-https://tankscraper.vercel.app
+## Lizenz
+MIT © 2026
