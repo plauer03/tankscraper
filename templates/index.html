@@ -11,8 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <link rel="stylesheet" href="/static/style.css?v=3.0">
-    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <link rel="stylesheet" href="/static/style.css?v=4.0">
 </head>
 <body>
 
@@ -76,13 +75,53 @@
         </div>
     </div>
 
+    <div id="view-route" class="view">
+        <header>
+            <div class="header-top">
+                <h1>Routenplaner</h1>
+            </div>
+        </header>
+        
+        <div class="content-scroll">
+            <div class="route-card">
+                <div class="route-input-group">
+                    <div class="route-timeline">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-line"></div>
+                        <div class="timeline-square"></div>
+                    </div>
+                    
+                    <div class="route-fields">
+                        <input type="text" id="route-start" placeholder="Start (z.B. Berlin)">
+                        <div class="field-divider"></div>
+                        <input type="text" id="route-end" placeholder="Ziel (z.B. Hamburg)">
+                    </div>
+                    
+                    <div class="route-swap" onclick="swapRoute()">
+                        <i class="ph-bold ph-arrows-down-up"></i>
+                    </div>
+                </div>
+                
+                <button class="btn-primary-action route-btn" onclick="planRoute()">
+                    Tankstellen auf Route suchen
+                </button>
+            </div>
+
+            <div id="route-results-list">
+                <div class="empty-state">
+                    <i class="ph-duotone ph-path"></i>
+                    <p>Plane deine Route, um Preise zu vergleichen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="view-settings" class="view">
         <header><h1>Einstellungen</h1></header>
         <div class="content-scroll">
             
             <div class="settings-title">MEIN FAHRZEUG</div>
             <div class="settings-card">
-                
                 <div class="settings-row">
                     <div class="row-label">
                         <div class="icon-box" style="background: #007AFF"><i class="ph-fill ph-car"></i></div>
@@ -112,7 +151,6 @@
                         <span class="unit">L</span>
                     </div>
                 </div>
-                
             </div>
 
             <div class="settings-info">
@@ -122,15 +160,6 @@
             <button class="btn-primary-action" onclick="saveSettings()">
                 Einstellungen speichern
             </button>
-
-        </div>
-    </div>
-
-    <div id="view-route" class="view">
-        <header><h1>Route</h1></header>
-        <div class="content-scroll empty-state">
-            <i class="ph-duotone ph-path"></i>
-            <p>Routenplanung kommt bald.</p>
         </div>
     </div>
 
@@ -160,7 +189,7 @@
                     <strong id="det-total">-</strong>
                 </div>
                  <div class="stat-item">
-                    <span class="label">Effektiv</span>
+                    <span class="label">Effektiv / L</span>
                     <strong id="det-real">-</strong>
                 </div>
                 <div class="stat-item">
@@ -190,6 +219,6 @@
         </a>
     </nav>
 
-    <script src="/static/app.js?v=3.0"></script>
+    <script src="/static/app.js?v=4.0"></script>
 </body>
 </html>

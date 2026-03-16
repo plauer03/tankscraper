@@ -198,3 +198,79 @@ function navigateExternal() {
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     window.open(url, '_blank');
 }
+
+// --- ROUTENPLANUNG ---
+
+function swapRoute() {
+    const start = document.getElementById('route-start');
+    const end = document.getElementById('route-end');
+    const temp = start.value;
+    start.value = end.value;
+    end.value = temp;
+}
+
+async function planRoute() {
+    const start = document.getElementById('route-start').value;
+    const end = document.getElementById('route-end').value;
+    const fuel = document.getElementById('fuel-type').value; // Wir nutzen den globalen Filter
+    const list = document.getElementById('route-results-list');
+    
+    if(!start || !end) return alert("Bitte Start und Ziel eingeben.");
+    
+    list.innerHTML = '<div class="empty-state"><i class="ph-bold ph-spinner ph-spin"></i><p>Berechne Route & lade Preise...</p></div>';
+    
+    try {
+        const res = await fetch('/api/route', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ start: start, end: end, fuel: fuel })
+        });
+        
+        const data = await res.json();
+        
+        if(data.error) {
+             list.innerHTML = `<div class="empty-state"><p>${data.error}</p></div>`;
+             return;
+        }
+        
+        renderRouteList(data);
+    } catch(e) {
+        list.innerHTML = '<div class="empty-state"><p>Fehler bei der Routenberechnung.</p></div>';
+    }
+}
+
+// Wir nutzen eine abgewandelte Liste für Routen, um den Text anzupassen
+function renderRouteList(data) {
+    const list = document.getElementById('route-results-list');
+    list.innerHTML = '';
+    
+    if(!data || data.length === 0) {
+        list.innerHTML = '<div class="empty-state"><p>Keine Tankstellen auf dieser Route gefunden.</p></div>';
+        return;
+    }
+
+    data.forEach(item => {
+        const pStr = item.price.toFixed(3);
+        const mainP = pStr.substring(0, 4);
+        const smallP = pStr.substring(4);
+        const brandChar = (item.brand || "T").charAt(0).toUpperCase();
+        
+        const div = document.createElement('div');
+        div.className = 'card-item';
+        div.onclick = () => openDetail(item); // Das Overlay funktioniert auch hier!
+        
+        div.innerHTML = `
+            <div class="card-left">
+                <div class="brand-avatar">${brandChar}</div>
+                <div class="info-col">
+                    <div class="station-name">${item.name}</div>
+                    <div class="dist-pill">Entlang der Route</div>
+                </div>
+            </div>
+            <div class="price-box">
+                <span class="price-clean">${mainP}<span class="price-suffix">${smallP}</span></span>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+}

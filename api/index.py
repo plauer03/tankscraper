@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
 
 # --- CONFIG ---
-TANKERKOENIG_API_KEY = os.environ.get("TK_API_KEY", "2a9db8b5-13db-41a3-af7e-91231b8d0a9f")  
+TANKERKOENIG_API_KEY = os.environ.get("TK_API_KEY")
 
 @app.route('/')
 def index():
@@ -19,15 +19,13 @@ def search():
     lon = float(data.get('lon') or 0)
     address_text = data.get('address_text')
     
-    # --- NEU: Alle Filterwerte aus dem Frontend abrufen ---
     fuel_type = data.get('fuel', 'e5')
-    radius = data.get('radius', 10)  # Standard: 10km
-    sort_by = data.get('sort', 'price')  # Standard: price (Preis)
+    radius = data.get('radius', 10)
+    sort_by = data.get('sort', 'price')
     
-    # FALLBACK: Wenn keine Koordinaten, aber Text da ist -> Geocoding
     if (lat == 0 or lon == 0) and address_text:
         try:
-            geolocator = Nominatim(user_agent="fuel_app_v2")
+            geolocator = Nominatim(user_agent="fuel_app_v3")
             location = geolocator.geocode(address_text, timeout=5)
             if location:
                 lat = location.latitude
@@ -35,24 +33,17 @@ def search():
             else:
                 return jsonify({"error": "Ort nicht gefunden"}), 404
         except:
-            return jsonify({"error": "Geocoding Service Fehler"}), 500
+            return jsonify({"error": "Geocoding Fehler"}), 500
 
-    # Wenn immer noch keine Koordinaten -> Abbruch
     if lat == 0 or lon == 0:
         return jsonify({"error": "Keine Koordinaten"}), 400
 
-    # Tankerkönig API Logic
     tk_type = "e5" if fuel_type == "super" else fuel_type
     url = "https://creativecommons.tankerkoenig.de/json/list.php"
     
-    # --- Dynamische Parameter einfügen ---
     params = {
-        "lat": lat, 
-        "lng": lon, 
-        "rad": radius,     # <--- Dynamischer Radius
-        "sort": sort_by,   # <--- Dynamische Sortierung
-        "type": tk_type, 
-        "apikey": TANKERKOENIG_API_KEY
+        "lat": lat, "lng": lon, "rad": radius,
+        "sort": sort_by, "type": tk_type, "apikey": TANKERKOENIG_API_KEY
     }
     
     try:
@@ -75,6 +66,67 @@ def search():
         return jsonify(cleaned)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/route', methods=['POST'])
+def route_search():
+    data = request.json
+    start_text = data.get('start')
+    end_text = data.get('end')
+    fuel_type = data.get('fuel', 'e10')
+    tk_type = "e5" if fuel_type == "super" else fuel_type
+
+    if not start_text or not end_text:
+        return jsonify({"error": "Start und Ziel erforderlich."}), 400
+
+    try:
+        geolocator = Nominatim(user_agent="fuel_app_route")
+        start_loc = geolocator.geocode(start_text, timeout=5)
+        end_loc = geolocator.geocode(end_text, timeout=5)
+
+        if not start_loc or not end_loc:
+            return jsonify({"error": "Start oder Ziel nicht gefunden."}), 404
+
+        osrm_url = f"http://router.project-osrm.org/route/v1/driving/{start_loc.longitude},{start_loc.latitude};{end_loc.longitude},{end_loc.latitude}?overview=simplified&geometries=geojson"
+        osrm_res = requests.get(osrm_url, timeout=8).json()
+
+        if osrm_res.get('code') != 'Ok':
+            return jsonify({"error": "Route konnte nicht berechnet werden."}), 500
+
+        coordinates = osrm_res['routes'][0]['geometry']['coordinates']
+        mid_index = len(coordinates) // 2
+        
+        points_to_check = [
+            (start_loc.latitude, start_loc.longitude),
+            (coordinates[mid_index][1], coordinates[mid_index][0]),
+            (end_loc.latitude, end_loc.longitude)
+        ]
+
+        all_stations = {}
+        for lat, lon in points_to_check:
+            tk_url = "https://creativecommons.tankerkoenig.de/json/list.php"
+            params = {
+                "lat": lat, "lng": lon, "rad": 10,
+                "sort": "price", "type": tk_type, "apikey": TANKERKOENIG_API_KEY
+            }
+            
+            r = requests.get(tk_url, params=params, timeout=5)
+            tk_data = r.json()
+            
+            if tk_data.get('ok'):
+                for st in tk_data.get('stations', []):
+                    if st['isOpen']:
+                        all_stations[st['id']] = {
+                            "name": st['name'], "brand": st['brand'],
+                            "street": st['street'], "place": st['place'],
+                            "price": st['price'], "dist": st['dist']
+                        }
+
+        results = list(all_stations.values())
+        results.sort(key=lambda x: x['price'])
+        return jsonify(results[:20])
+
+    except Exception as e:
+        return jsonify({"error": f"Server Fehler: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')
