@@ -69,12 +69,18 @@ async function triggerSearch() {
     const inputVal = document.getElementById('address-input').value;
     const list = document.getElementById('results-list');
     const fuel = document.getElementById('fuel-type').value;
+    const radius = document.getElementById('radius-select').value;
+    const sort = document.getElementById('sort-select').value;
 
     // Modus entscheiden: Textsuche oder Koordinaten?
     // Wenn "Mein Standort" im Feld steht UND wir Koordinaten haben -> nimm Koordinaten
     // Sonst -> nimm Textadresse (Backend muss geocoding machen)
     
-    let payload = { fuel: fuel };
+    let payload = { 
+        fuel: fuel,
+        radius : radius,
+        sort : sort
+    };
     
     if (inputVal === "Mein Standort" && currentLat !== 0) {
         payload.lat = currentLat;

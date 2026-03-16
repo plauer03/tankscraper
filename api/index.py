@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 import os
-from geopy.geocoders import Nominatim # <--- WICHTIG: Das hier hat gefehlt
+from geopy.geocoders import Nominatim
 
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
 
 # --- CONFIG ---
-TANKERKOENIG_API_KEY = os.environ.get("TK_API_KEY")  
-HEADERS = {"User-Agent": "FuelCalcPro/PWA"}
+TANKERKOENIG_API_KEY = os.environ.get("TK_API_KEY", "2a9db8b5-13db-41a3-af7e-91231b8d0a9f")  
 
 @app.route('/')
 def index():
@@ -19,7 +18,11 @@ def search():
     lat = float(data.get('lat') or 0)
     lon = float(data.get('lon') or 0)
     address_text = data.get('address_text')
+    
+    # --- NEU: Alle Filterwerte aus dem Frontend abrufen ---
     fuel_type = data.get('fuel', 'e5')
+    radius = data.get('radius', 10)  # Standard: 10km
+    sort_by = data.get('sort', 'price')  # Standard: price (Preis)
     
     # FALLBACK: Wenn keine Koordinaten, aber Text da ist -> Geocoding
     if (lat == 0 or lon == 0) and address_text:
@@ -41,9 +44,15 @@ def search():
     # Tankerkönig API Logic
     tk_type = "e5" if fuel_type == "super" else fuel_type
     url = "https://creativecommons.tankerkoenig.de/json/list.php"
+    
+    # --- Dynamische Parameter einfügen ---
     params = {
-        "lat": lat, "lng": lon, "rad": 10,
-        "sort": "price", "type": tk_type, "apikey": TANKERKOENIG_API_KEY
+        "lat": lat, 
+        "lng": lon, 
+        "rad": radius,     # <--- Dynamischer Radius
+        "sort": sort_by,   # <--- Dynamische Sortierung
+        "type": tk_type, 
+        "apikey": TANKERKOENIG_API_KEY
     }
     
     try:

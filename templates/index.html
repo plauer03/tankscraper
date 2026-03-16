@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#F2F2F7">
-    <title>Fuel</title>
+    <meta name="theme-color" content="#F7F7F7">
+    <title>refuel</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="/static/style.css">
+    
+    <link rel="stylesheet" href="/static/style.css?v=3.0">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
 </head>
 <body>
@@ -19,29 +21,49 @@
             <div class="header-top">
                 <h1>Tankstellen</h1>
                 <div class="car-badge" onclick="switchTab('settings')">
-                   <i class="ph-fill ph-car-profile"></i>
                    <span id="header-car-name">Mein Auto</span>
+                   <i class="ph-bold ph-caret-right"></i>
                 </div>
             </div>
             
-            <div class="search-container">
-                <div class="search-input-wrapper">
-                    <i class="ph-bold ph-magnifying-glass search-icon" onclick="triggerSearch()"></i>
-                    <input type="text" id="address-input" placeholder="Stadt oder PLZ..." onkeydown="handleEnter(event)">
+            <div class="controls-docker">
+                <div class="search-row">
+                    <div class="search-input-wrapper">
+                        <i class="ph-bold ph-magnifying-glass search-icon" onclick="triggerSearch()"></i>
+                        <input type="text" id="address-input" placeholder="Stadt oder PLZ eingeben..." onkeydown="handleEnter(event)">
+                    </div>
+                    <button class="geo-btn" onclick="locateMe()">
+                        <i class="ph-fill ph-navigation-arrow"></i>
+                    </button>
                 </div>
-                <button class="geo-btn" onclick="locateMe()">
-                    <i class="ph-fill ph-navigation-arrow"></i>
-                </button>
-            </div>
 
-            <div class="filter-row">
-                <div class="select-wrapper">
-                    <select id="fuel-type" onchange="triggerSearch()">
-                        <option value="e5">Super E5</option>
-                        <option value="e10" selected>Super E10</option>
-                        <option value="diesel">Diesel</option>
-                    </select>
-                    <i class="ph-bold ph-caret-down select-arrow"></i>
+                <div class="filter-row">
+                    <div class="custom-select">
+                        <select id="fuel-type" onchange="triggerSearch()">
+                            <option value="e5">Super E5</option>
+                            <option value="e10" selected>Super E10</option>
+                            <option value="diesel">Diesel</option>
+                        </select>
+                        <i class="ph-bold ph-caret-down drop-icon"></i>
+                    </div>
+                    
+                    <div class="custom-select">
+                        <select id="radius-select" onchange="triggerSearch()">
+                            <option value="2">2 km</option>
+                            <option value="5" selected>5 km</option>
+                            <option value="10">10 km</option>
+                            <option value="15">15 km</option>
+                        </select>
+                        <i class="ph-bold ph-caret-down drop-icon"></i>
+                    </div>
+
+                    <div class="custom-select">
+                        <select id="sort-select" onchange="triggerSearch()">
+                            <option value="price" selected>Preis</option>
+                            <option value="dist">Nähe</option>
+                        </select>
+                        <i class="ph-bold ph-caret-down drop-icon"></i>
+                    </div>
                 </div>
             </div>
         </header>
@@ -49,7 +71,7 @@
         <div id="results-list" class="content-scroll">
             <div class="empty-state">
                 <i class="ph-duotone ph-map-pin"></i>
-                <p>Gib einen Ort ein oder nutze den Pfeil.</p>
+                <p>Gib einen Ort ein.</p>
             </div>
         </div>
     </div>
@@ -60,6 +82,7 @@
             
             <div class="settings-title">MEIN FAHRZEUG</div>
             <div class="settings-card">
+                
                 <div class="settings-row">
                     <div class="row-label">
                         <div class="icon-box" style="background: #007AFF"><i class="ph-fill ph-car"></i></div>
@@ -75,7 +98,7 @@
                     </div>
                     <div class="input-wrapper">
                         <input type="number" id="car-cons" placeholder="7.5" step="0.1">
-                        <span class="unit">L/100km</span>
+                        <span class="unit">L</span>
                     </div>
                 </div>
 
@@ -86,9 +109,10 @@
                     </div>
                     <div class="input-wrapper">
                         <input type="number" id="car-tank" placeholder="50">
-                        <span class="unit">Liter</span>
+                        <span class="unit">L</span>
                     </div>
                 </div>
+                
             </div>
 
             <div class="settings-info">
@@ -114,6 +138,7 @@
         <div class="overlay-backdrop" onclick="closeDetail()"></div>
         <div class="overlay-card">
             <div class="drag-handle"></div>
+            
             <div class="overlay-header">
                 <div class="brand-pill" id="det-brand-pill">A</div>
                 <button class="close-btn" onclick="closeDetail()"><i class="ph-bold ph-x"></i></button>
@@ -135,8 +160,8 @@
                     <strong id="det-total">-</strong>
                 </div>
                  <div class="stat-item">
-                    <span class="label">Effektiv / L</span>
-                    <strong id="det-real" style="color:var(--accent)">-</strong>
+                    <span class="label">Effektiv</span>
+                    <strong id="det-real">-</strong>
                 </div>
                 <div class="stat-item">
                     <span class="label">Fahrtweg</span>
@@ -165,6 +190,6 @@
         </a>
     </nav>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=3.0"></script>
 </body>
 </html>
