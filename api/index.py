@@ -8,6 +8,60 @@ app = Flask(__name__, static_folder='../static', template_folder='../templates')
 # --- CONFIG ---
 TANKERKOENIG_API_KEY = os.environ.get("TK_API_KEY")
 
+# --- brand mapping
+BRAND_DOMAIN_MAP = {
+    # 🇩🇪 
+    "aral": "aral.de",
+    "shell": "shell.com",
+    "bp": "bp.com",
+    "esso": "esso.de",
+    "total": "totalenergies.com",
+    "totalenergies": "totalenergies.com",
+    "jet": "jet-tankstellen.de",
+    "star": "star.de",
+    "avia": "avia.de",
+    "hem": "hem-tankstelle.de",
+    "bft": "bft.de",
+    "q1": "q1.eu",
+    "markant": "markant-tankstellen.de",
+    "ratio": "ratio-tankstellen.de",
+    "globus": "globus.de",
+    "edeka": "edeka.de",
+    "rewe": "rewe.de",
+
+    # international
+    "eni": "eni.com",
+    "agip": "eni.com",
+    "agpi eni": "eni.com",
+    "omv": "omv.com",
+    "orlen": "orlen.pl",
+    "circle k": "circlek.com",
+    "texaco": "texaco.com",
+    "gulf": "gulf.com",
+
+    # 🇫🇷 / 🇪🇸 / 🇮🇹 etc.
+    "cepsa": "cepsa.com",
+    "repsol": "repsol.com",
+
+    # 🇳🇱 / 🇧🇪
+    "tango": "tango.nl",
+
+    # fallback keys
+    "": None,
+    None: None
+}
+
+def get_logo_url(brand):
+    if not brand:
+        return None
+    
+    domain = BRAND_DOMAIN_MAP.get(brand.lower())
+    if not domain:
+        return None
+    
+    return f"https://img.logo.dev/{domain}?token=pk_JxklmdOOSI6pJKAAMx3TQA"
+# -----------
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -61,7 +115,8 @@ def search():
                 "street": st['street'],
                 "place": st['place'],
                 "price": st['price'],
-                "dist": st['dist']
+                "dist": st['dist'],
+                "logo": get_logo_url(st['brand'])
             })
         return jsonify(cleaned)
     except Exception as e:

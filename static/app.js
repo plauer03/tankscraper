@@ -132,7 +132,7 @@ function renderList(data) {
         const smallP = pStr.substring(4);   // "9"
         
         // Brand Avatar Color (Pseudo-Random basierend auf Name)
-        const brandChar = (item.brand || "T").charAt(0).toUpperCase();
+        // const brandChar = (item.brand || "T").charAt(0).toUpperCase();
         
         const div = document.createElement('div');
         div.className = 'card-item';
@@ -140,7 +140,13 @@ function renderList(data) {
         
         div.innerHTML = `
             <div class="card-left">
-                <div class="brand-avatar">${brandChar}</div>
+                <div class="brand-avatar">
+                    ${
+                        item.logo 
+                        ? `<img src="${item.logo}" alt="${item.brand}" />`
+                        : `<span>⛽</span>`
+                    }
+                </div>
                 <div class="info-col">
                     <div class="station-name">${item.name}</div>
                     <div class="dist-pill">${item.dist.toFixed(1)} km</div>
